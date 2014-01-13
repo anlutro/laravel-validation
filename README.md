@@ -20,6 +20,10 @@ The class will automatically replace `<table>` with the model's table, and if yo
 
 The class will also replace `[foo]` with whatever the value of 'foo' from the provided input (attributes) are. This way, you can add the value of another input field to a rule (for example, `'end_date' => ['date', 'after:[start_date]']`.
 
+There are a couple of hooks you can use to add custom behaviour. `prepareRules($rules, $attributes)` will be called after rules are merged and allows you to change validation rules based on input if necessary. This method *needs* to return the modified array of rules!
+
+`prepareValidator($validator)` is called before checking if validation passes or not, and can be used to add sometimes() rules or any other custom behaviour.
+
 ## Contact
 Open an issue on GitHub if you have any problems or suggestions.
 
