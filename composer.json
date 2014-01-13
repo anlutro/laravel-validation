@@ -1,6 +1,7 @@
 {
 	"name": "anlutro/l4-validation",
 	"description": "Validation service class for Laravel 4.",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Andreas Lutro",
@@ -9,7 +10,8 @@
 	],
 	"require": {
 		"php": ">=5.4.0",
-		"illuminate/validation": "4.1.*"
+		"illuminate/validation": "4.1.*",
+		"illuminate/support": "4.1.*"
 	},
 	"require-dev": {
 		"mockery/mockery": "dev-master"

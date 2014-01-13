@@ -114,7 +114,7 @@ abstract class Validator
 	 */
 	protected function parseRules(array $rules, array $attributes)
 	{
-		$rules = $rules + $this->getCommonRules();
+		$rules = array_merge_recursive($this->getCommonRules(), $rules);
 		$rules = $this->prepareRules($rules, $attributes);
 		$rules = $this->replaceRuleVariables($rules, $attributes);
 		return $rules;
