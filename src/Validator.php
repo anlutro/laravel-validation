@@ -26,6 +26,13 @@ abstract class Validator
 	protected $key = 'NULL';
 
 	/**
+	 * The table to replace <table> with in rules.
+	 *
+	 * @var string
+	 */
+	protected $table;
+
+	/**
 	 * @var Illuminate\Validation\Validator
 	 */
 	protected $validator;
@@ -159,7 +166,7 @@ abstract class Validator
 				$item = str_replace('<key>', $this->key, $item);
 			}
 
-			if (strpos($item, '<table>') !== false) {
+			if ($this->table && strpos($item, '<table>') !== false) {
 				$item = str_replace('<table>', $this->table, $item);
 			}
 
