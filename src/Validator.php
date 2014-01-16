@@ -162,6 +162,9 @@ abstract class Validator
 	protected function replaceRuleVariables(array $rules, array $attributes)
 	{
 		array_walk_recursive($rules, function(&$item, $key) use($attributes) {
+			// don't mess with regex rules
+			if (substr($item, 0, 6) !== 'regex:') return;
+
 			if (strpos($item, '<key>') !== false) {
 				$item = str_replace('<key>', $this->key, $item);
 			}
