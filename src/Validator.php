@@ -10,7 +10,7 @@
 namespace c;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Validator as VFactory;
+use Illuminate\Validation\Factory;
 
 /**
  * Validator class that can be injected into a repository or controller or
@@ -26,21 +26,21 @@ abstract class Validator
 	protected $key = 'NULL';
 
 	/**
-	 * @var Illuminate\Validation\Validator;
+	 * @var Illuminate\Validation\Validator
 	 */
 	protected $validator;
 
 	/**
-	 * @var Illuminate\Database\Eloquent\Model;
+	 * @var Illuminate\Validation\Factory
 	 */
-	protected $model;
+	protected $factory;
 
 	/**
-	 * @param \Illuminate\Database\Eloquent\Model $model
+	 * @param Illuminate\Validation\Factory
 	 */
-	public function __construct(Model $model)
+	public function __construct(Factory $factory)
 	{
-		$this->model = $model;
+		$this->factory = $factory;
 	}
 
 	/**
@@ -62,6 +62,30 @@ abstract class Validator
 	public function getKey()
 	{
 		return $this->key;
+	}
+
+	/**
+	 * Set the table the validator checks against.
+	 *
+	 * @param Illuminate\Database\Eloquent\Model|string $table
+	 */
+	public function setTable($table)
+	{
+		if ($table instanceof Model) {
+			$table = $table->getTable();
+		}
+
+		$this->table = $table;
+	}
+
+	/**
+	 * Get the table the validator checks against.
+	 *
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->table;
 	}
 
 	/**
@@ -99,7 +123,7 @@ abstract class Validator
 	protected function valid(array $rules, array $attributes)
 	{
 		$rules = $this->parseRules($rules, $attributes);
-		$this->validator = VFactory::make($attributes, $rules);
+		$this->validator = $this->factory->make($attributes, $rules);
 		$this->prepareValidator($this->validator);
 		return $this->validator->passes();
 	}
@@ -136,7 +160,7 @@ abstract class Validator
 			}
 
 			if (strpos($item, '<table>') !== false) {
-				$item = str_replace('<table>', $this->model->getTable(), $item);
+				$item = str_replace('<table>', $this->table, $item);
 			}
 
 			foreach ($attributes as $key => $value) {

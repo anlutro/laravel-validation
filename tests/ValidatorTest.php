@@ -7,17 +7,16 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 {
 	public function tearDown()
 	{
-		Facades\Facade::setFacadeApplication(null);
-		Facades\Facade::clearResolvedInstances();
 		m::close();
 	}
 
 	public function testRulesArePassed()
 	{
-		$v = $this->makeValidator();
+		$f = $this->makeFactory();
+		$v = $this->makeValidator($f);
 		$input = ['foo' => 'bar'];
 		$rules = ['foo' => ['bar']];
-		Facades\Validator::shouldReceive('make')->once()->with($input, $rules)
+		$f->shouldReceive('make')->once()->with($input, $rules)
 			->andReturn(m::mock(['passes' => true]));
 		$result = $v->validSomething($input);
 		$this->assertTrue($result);
@@ -25,10 +24,11 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 	
 	public function testRulesArePassed2()
 	{
-		$v = $this->makeValidator();
+		$f = $this->makeFactory();
+		$v = $this->makeValidator($f);
 		$input = ['foo' => 'bar'];
 		$rules = ['foo' => ['bar']];
-		Facades\Validator::shouldReceive('make')->once()->with($input, $rules)
+		$f->shouldReceive('make')->once()->with($input, $rules)
 			->andReturn(m::mock(['passes' => false]));
 		$result = $v->validSomething($input);
 		$this->assertFalse($result);
@@ -36,10 +36,11 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
 	public function testRulesAreCombined()
 	{
-		$v = $this->makeValidator();
+		$f = $this->makeFactory();
+		$v = $this->makeValidator($f);
 		$input = ['foo' => 'bar'];
 		$rules = ['foo' => ['bar', 'foo'], 'bar' => ['baz']];
-		Facades\Validator::shouldReceive('make')->once()->with($input, $rules)
+		$f->shouldReceive('make')->once()->with($input, $rules)
 			->andReturn(m::mock(['passes' => true]));
 		$result = $v->validCreate($input);
 		$this->assertTrue($result);
@@ -47,10 +48,12 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
 	public function testTableIsReplaced()
 	{
-		$v = $this->makeValidator();
+		$f = $this->makeFactory();
+		$v = $this->makeValidator($f);
+		$v->setTable('table');
 		$input = ['foo' => 'bar'];
 		$rules = ['foo' => ['bar'], 'baz' => ['foo:table', 'bar:1']];
-		Facades\Validator::shouldReceive('make')->once()->with($input, $rules)
+		$f->shouldReceive('make')->once()->with($input, $rules)
 			->andReturn(m::mock(['passes' => true]));
 		$v->setKey(1);
 		$result = $v->validDynamic($input);
@@ -59,10 +62,11 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
 	public function testInputVarIsReplaced()
 	{
-		$v = $this->makeValidator();
+		$f = $this->makeFactory();
+		$v = $this->makeValidator($f);
 		$input = ['foo' => 'bar', 'input' => 'baz'];
 		$rules = ['foo' => ['bar', 'bar:baz']];
-		Facades\Validator::shouldReceive('make')->once()->with($input, $rules)
+		$f->shouldReceive('make')->once()->with($input, $rules)
 			->andReturn(m::mock(['passes' => true]));
 		$result = $v->validInput($input);
 		$this->assertTrue($result);
@@ -70,19 +74,24 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
 	public function testRulesArePrepared()
 	{
-		$v = $this->makeValidator();
+		$f = $this->makeFactory();
+		$v = $this->makeValidator($f);
 		$input = ['foo' => 'bar', 'prepareme' => 'prepareme'];
 		$rules = ['foo' => ['bar'], 'prepared' => true];
-		Facades\Validator::shouldReceive('make')->once()->with($input, $rules)
+		$f->shouldReceive('make')->once()->with($input, $rules)
 			->andReturn(m::mock(['passes' => true]));
 		$result = $v->validSomething($input);
 		$this->assertTrue($result);
 	}
 
-	protected function makeValidator($class = 'ValidatorStub', $model = null)
+	protected function makeFactory()
 	{
-		$model = $model ?: $this->makeMockModel();
-		return new $class($model);
+		return m::mock('Illuminate\Validation\Factory');
+	}
+
+	protected function makeValidator($factory)
+	{
+		return new ValidatorStub($factory);
 	}
 
 	protected function makeMockModel($class = 'Illuminate\Database\Eloquent\Model')
