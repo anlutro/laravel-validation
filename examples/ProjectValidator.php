@@ -4,11 +4,6 @@
  */
 class ProjectValidator extends \c\Validator
 {
-	public function __construct(ProjectModel $project)
-	{
-		parent::__construct($project);
-	}
-
 	/**
 	 * Get the common rules ran on every validation call.
 	 */
