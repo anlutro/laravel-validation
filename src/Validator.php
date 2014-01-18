@@ -19,20 +19,6 @@ use Illuminate\Validation\Factory;
 abstract class Validator
 {
 	/**
-	 * The key to replace <key> with in rules.
-	 *
-	 * @var string
-	 */
-	protected $key = 'NULL';
-
-	/**
-	 * The table to replace <table> with in rules.
-	 *
-	 * @var string
-	 */
-	protected $table;
-
-	/**
 	 * @var Illuminate\Validation\Validator
 	 */
 	protected $validator;
@@ -43,6 +29,15 @@ abstract class Validator
 	protected $factory;
 
 	/**
+	 * Variables to replace in the validation rules.
+	 *
+	 * @var array
+	 */
+	protected $replace = array(
+		'key' => 'NULL',
+	);
+
+	/**
 	 * @param Illuminate\Validation\Factory
 	 */
 	public function __construct(Factory $factory)
@@ -51,48 +46,39 @@ abstract class Validator
 	}
 
 	/**
-	 * Set the key of the active model. Should be done before updating if there
-	 * are any exists/unique rules.
+	 * Tell the validator to replace a certain value in the rules.
 	 *
-	 * @param mixed $key
+	 * @param  string $key
+	 * @param  string $value
+	 *
+	 * @return void
+	 */
+	public function replace($key, $value)
+	{
+		$key = (string) $key;
+		$value = (string) $value;
+
+		if ($value === null) {
+			unset($this->replace[$key]);
+		} else {
+			$this->replace[$key] = $value;
+		}
+	}
+
+	/**
+	 * @deprecated  Use replace()
 	 */
 	public function setKey($key)
 	{
-		$this->key = $key;
+		$this->replace('key', $key);
 	}
 
 	/**
-	 * Get the key of the active model.
-	 *
-	 * @return mixed
-	 */
-	public function getKey()
-	{
-		return $this->key;
-	}
-
-	/**
-	 * Set the table the validator checks against.
-	 *
-	 * @param Illuminate\Database\Eloquent\Model|string $table
+	 * @deprecated  Use replace()
 	 */
 	public function setTable($table)
 	{
-		if ($table instanceof Model) {
-			$table = $table->getTable();
-		}
-
-		$this->table = $table;
-	}
-
-	/**
-	 * Get the table the validator checks against.
-	 *
-	 * @return string
-	 */
-	public function getTable()
-	{
-		return $this->table;
+		$this->replace('table', $table);
 	}
 
 	/**
@@ -165,14 +151,14 @@ abstract class Validator
 			// don't mess with regex rules
 			if (substr($item, 0, 6) === 'regex:') return;
 
-			if (strpos($item, '<key>') !== false) {
-				$item = str_replace('<key>', $this->key, $item);
+			// replace explicit variables
+			foreach ($this->replace as $key => $value) {
+				if (strpos($item, "<$key>") !== false) {
+					$item = str_replace("<$key>", $value, $item);
+				}
 			}
 
-			if ($this->table && strpos($item, '<table>') !== false) {
-				$item = str_replace('<table>', $this->table, $item);
-			}
-
+			// replace input variables
 			foreach ($attributes as $key => $value) {
 				if (strpos($item, "[$key]") !== false) {
 					$item = str_replace("[$key]", $value, $item);
