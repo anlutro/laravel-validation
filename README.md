@@ -6,19 +6,23 @@ Pick the latest stable version from packagist or the GitHub tag list.
 WARNING: Backwards compatibility is not guaranteed during version 0.x.
 
 ### Validation service
-Location: src/Validator.php
+This validation class is a layer on top of Laravel's own Validation class (the one you create by calling Validator::make), meant to be injected into a repository or controller. It allows for more advanced rulesets and more dynamic rules, and is being utilized in my [repository class](https://github.com/anlutro/laravel-repository).
 
-This validation class is a layer on top of Laravel's own Validation class (the one you create by calling Validator::make), meant to be injected into a repository or controller.
+Your class must implement one abstract method: `getCommonRules`. This should return an array of rules that are used on every validation call and should be the bare minimum of rules. In addition you can implement as many extra rule getters as you like - `getCreateRules`, `getUpdateRules`, `getUpdateAsAdminRules`, `getFooRules` and so on.
 
-Create one Validator for each model or purpose. Overwrite the constructor to inject the correct model type and call `parent::__construct($model)`.
+Rules are dynamically merged depending on what action you're trying to validate. For example, `$validator->validCreate($attributes)` will merge `getCommonRules` and `getCreateRules`. If `getCreateRules` doesn't exist, it'll just use `getCommonRules`. `$validator->validUpdateAsAdmin($attributes)` will merge `getCommonRules` and `getUpdateAsAdminRules`. Rules are merged recursively.
 
-Your class must implement the abstract method `getCommonRules` - this should return an array of rules that are used on every validation call. In addition you can implement as many extra rule getters as you like - `getCreateRules`, `getUpdateRules`, `getFooRules` and so on.
+You can tell the validator to replace variables in rules with the `replace($key, $value)` method. For example, if you have a unique rule and want to dynamically replace the table with a model's table, you can do the following:
 
-Rules are dynamically merged depending on what action you're trying to validate. For example, `$validator->validCreate($attributes)` will merge `getCommonRules` and `getCreateRules`. If `getCreateRules` doesn't exist, it'll just use `getCommonRules`.
+	public function getCommonRules() {
+		return ['email' => 'unique:<table>'];
+	}
 
-The class will automatically replace `<table>` with the model's table, and if you've set a key using `$validator->setKey(123)`, `<key>` will be replaced with what you provided (if you don't, it'll replace it with `null`). Very useful for exists and unique rules.
+	$validator->replace('table', $model->getTable());
 
-The class will also replace `[foo]` with whatever the value of 'foo' from the provided input (attributes) are. This way, you can add the value of another input field to a rule (for example, `'end_date' => ['date', 'after:[start_date]']`.
+The class will also replace variables in square brackets with the matching key from input. For example, `[foo]` will be replaced with whatever the value of 'foo' from the provided input (attributes) are. This way, you can add the value of another input field to a rule (for example, `'end_date' => ['date', 'after:[start_date]']`.
+
+Replacing variables will not work in regex rules, as that would potentially break regex operators.
 
 There are a couple of hooks you can use to add custom behaviour. `prepareRules($rules, $attributes)` will be called after rules are merged and allows you to change validation rules based on input if necessary. This method *needs* to return the modified array of rules!
 
