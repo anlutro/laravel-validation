@@ -110,12 +110,13 @@ abstract class Validator
 	 *
 	 * @param  array  $rules
 	 * @param  array  $attributes
+	 * @param  bool   $merge      Whether or not to merge with common rules
 	 *
 	 * @return boolean
 	 */
-	protected function valid(array $rules, array $attributes)
+	protected function valid(array $rules, array $attributes, $merge = true)
 	{
-		$rules = $this->parseRules($rules, $attributes);
+		$rules = $this->parseRules($rules, $attributes, $merge);
 		$this->validator = $this->factory->make($attributes, $rules);
 		$this->prepareValidator($this->validator);
 		return $this->validator->passes();
@@ -126,12 +127,13 @@ abstract class Validator
 	 *
 	 * @param  array  $rules
 	 * @param  array  $attributes
+	 * @param  bool   $merge      Whether or not to merge with common rules
 	 *
 	 * @return array
 	 */
-	protected function parseRules(array $rules, array $attributes)
+	protected function parseRules(array $rules, array $attributes, $merge = true)
 	{
-		$rules = array_merge_recursive($this->getCommonRules(), $rules);
+		if ($merge) $rules = array_merge_recursive($this->getCommonRules(), $rules);
 		$rules = $this->prepareRules($rules, $attributes);
 		$rules = $this->replaceRuleVariables($rules, $attributes);
 		return $rules;
