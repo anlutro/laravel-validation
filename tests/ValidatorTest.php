@@ -84,6 +84,24 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($result);
 	}
 
+	public function testThrowsException()
+	{
+		$f = $this->makeFactory();
+		$v = $this->makeValidator($f);
+		$v->toggleExceptions(true);
+		$input = ['foo' => 'bar'];
+		$rules = ['foo' => ['bar']];
+		$f->shouldReceive('make')->once()->with($input, $rules)
+			->andReturn(m::mock(['passes' => false, 'getMessageBag' => []]));
+		try {
+			$v->validSomething($input);
+		} catch (c\ValidationException $e) {
+			$this->assertEquals($input, $e->getAttributes());
+			$this->assertEquals($rules, $e->getRules());
+			$this->assertContains('Something', $e->getMessage());
+		}
+	}
+
 	protected function makeFactory()
 	{
 		return m::mock('Illuminate\Validation\Factory');

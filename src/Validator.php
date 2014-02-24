@@ -38,11 +38,32 @@ abstract class Validator
 	);
 
 	/**
+	 * Whether the validator should throw an exception or just return a
+	 * boolean on validation errors.
+	 *
+	 * @var boolean
+	 */
+	protected $throwException = false;
+
+	/**
 	 * @param Illuminate\Validation\Factory
 	 */
 	public function __construct(Factory $factory)
 	{
 		$this->factory = $factory;
+	}
+
+	/**
+	 * Toggle whether to throw exceptions on validation errors.
+	 *
+	 * @param  boolean $toggle
+	 *
+	 * @return static
+	 */
+	public function toggleExceptions($toggle = true)
+	{
+		$this->throwException = (bool) $toggle;
+		return $this;
 	}
 
 	/**
@@ -102,7 +123,7 @@ abstract class Validator
 
 		$attributes = $args[0];
 
-		return $this->valid($rules, $attributes);
+		return $this->valid($rules, $attributes, true, $action);
 	}
 
 	/**
@@ -111,15 +132,25 @@ abstract class Validator
 	 * @param  array  $rules
 	 * @param  array  $attributes
 	 * @param  bool   $merge      Whether or not to merge with common rules
+	 * @param  string $action
 	 *
 	 * @return boolean
 	 */
-	protected function valid(array $rules, array $attributes, $merge = true)
+	protected function valid(array $rules, array $attributes, $merge = true, $action = null)
 	{
 		$rules = $this->parseRules($rules, $attributes, $merge);
 		$this->validator = $this->factory->make($attributes, $rules);
 		$this->prepareValidator($this->validator);
-		return $this->validator->passes();
+
+		if ($this->throwException) {
+			if ($this->validator->passes()) {
+				return true;
+			} else {
+				throw new ValidationException($this->validator->getMessageBag(), $rules, $attributes, $action);
+			}
+		} else {
+			return $this->validator->passes();
+		}
 	}
 
 	/**
