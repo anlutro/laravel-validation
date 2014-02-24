@@ -92,13 +92,14 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		$input = ['foo' => 'bar'];
 		$rules = ['foo' => ['bar']];
 		$f->shouldReceive('make')->once()->with($input, $rules)
-			->andReturn(m::mock(['passes' => false, 'getMessageBag' => []]));
+			->andReturn(m::mock(['passes' => false, 'getMessageBag' => ['foo']]));
 		try {
 			$v->validSomething($input);
 		} catch (c\ValidationException $e) {
 			$this->assertEquals($input, $e->getAttributes());
 			$this->assertEquals($rules, $e->getRules());
 			$this->assertContains('Something', $e->getMessage());
+			$this->assertEquals('{"errors":["foo"]}', json_encode($e));
 		}
 	}
 
