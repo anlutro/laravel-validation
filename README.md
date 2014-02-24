@@ -26,7 +26,16 @@ Replacing variables will not work in regex rules, as that would potentially brea
 
 There are a couple of hooks you can use to add custom behaviour. `prepareRules($rules, $attributes)` will be called after rules are merged and allows you to change validation rules based on input if necessary. This method *needs* to return the modified array of rules!
 
-`prepareValidator($validator)` is called before checking if validation passes or not, and can be used to add sometimes() rules or any other custom behaviour.
+`prepareValidator($validator)` is called before checking if validation passes or not, and can be used to add sometimes() rules or any other custom behaviour onto the Illuminate\Validation\Validator object itself.
+
+#### Exceptions
+You can call `$validatorService->toggleExceptions();` to make the validator throw exceptions instead of just returning false. The exception thrown will be of the type `c\ValidationException`, which has some useful methods.
+
+- `getErrors()` gets a flat array of the validation errors.
+- `getRules()` gets the array of rules that were used when validating.
+- `getAttributes()` gets the array of input that was validated.
+
+It can also be cast to a string via `(string) $exception` which will render each validation error on one line.
 
 ## Contact
 Open an issue on GitHub if you have any problems or suggestions.
