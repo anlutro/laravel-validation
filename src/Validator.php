@@ -46,6 +46,14 @@ abstract class Validator
 	protected $throwException = false;
 
 	/**
+	 * Default merge behaviour - whether specific rules are merged with
+	 * getCommonRules or not.
+	 *
+	 * @var boolean
+	 */
+	protected $merge = true;
+
+	/**
 	 * @param Illuminate\Validation\Factory
 	 */
 	public function __construct(Factory $factory)
@@ -123,7 +131,7 @@ abstract class Validator
 
 		$attributes = $args[0];
 
-		return $this->valid($rules, $attributes, true, $action);
+		return $this->valid($rules, $attributes, null, $action);
 	}
 
 	/**
@@ -136,7 +144,7 @@ abstract class Validator
 	 *
 	 * @return boolean
 	 */
-	protected function valid(array $rules, array $attributes, $merge = true, $action = null)
+	protected function valid(array $rules, array $attributes, $merge = null, $action = null)
 	{
 		$rules = $this->parseRules($rules, $attributes, $merge);
 		$this->validator = $this->factory->make($attributes, $rules);
@@ -162,8 +170,12 @@ abstract class Validator
 	 *
 	 * @return array
 	 */
-	protected function parseRules(array $rules, array $attributes, $merge = true)
+	protected function parseRules(array $rules, array $attributes, $merge = null)
 	{
+		if ($merge === null) {
+			$merge = $this->merge;
+		}
+
 		if ($merge) $rules = array_merge_recursive($this->getCommonRules(), $rules);
 		$rules = $this->prepareRules($rules, $attributes);
 		$rules = $this->replaceRuleVariables($rules, $attributes);

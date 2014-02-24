@@ -102,6 +102,17 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		}
 	}
 
+	public function testDefaultMergeBehaviour()
+	{
+		$f = $this->makeFactory();
+		$v = new NoMergeValidatorStub($f);
+		$input = ['foo' => 'bar'];
+		$rules = ['bar' => ['foo']];
+		$f->shouldReceive('make')->once()->with($input, $rules)
+			->andReturn(m::mock(['passes' => true]));
+		$v->validSpecific($input);
+	}
+
 	protected function makeFactory()
 	{
 		return m::mock('Illuminate\Validation\Factory');
@@ -149,5 +160,20 @@ class ValidatorStub extends \c\Validator
 		}
 
 		return $rules;
+	}
+}
+
+class NoMergeValidatorStub extends ValidatorStub
+{
+	protected $merge = false;
+
+	public function getCommonRules()
+	{
+		return ['foo' => ['bar']];
+	}
+
+	public function getSpecificRules()
+	{
+		return ['bar' => ['foo']];
 	}
 }
