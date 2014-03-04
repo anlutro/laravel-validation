@@ -19,12 +19,12 @@ use Illuminate\Validation\Factory;
 abstract class Validator
 {
 	/**
-	 * @var Illuminate\Validation\Validator
+	 * @var \Illuminate\Validation\Validator
 	 */
 	protected $validator;
 
 	/**
-	 * @var Illuminate\Validation\Factory
+	 * @var \Illuminate\Validation\Factory
 	 */
 	protected $factory;
 
@@ -54,7 +54,7 @@ abstract class Validator
 	protected $merge = true;
 
 	/**
-	 * @param Illuminate\Validation\Factory
+	 * @param \Illuminate\Validation\Factory
 	 */
 	public function __construct(Factory $factory)
 	{

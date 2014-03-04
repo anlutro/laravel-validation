@@ -57,7 +57,7 @@ class ValidationException extends Exception implements MessageProviderInterface
 	/**
 	 * Get the message bag instance.
 	 *
-	 * @return Illuminate\Support\MessageBag
+	 * @return \Illuminate\Support\MessageBag
 	 */
 	public function getMessageBag()
 	{
