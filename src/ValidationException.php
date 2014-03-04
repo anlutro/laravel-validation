@@ -10,13 +10,14 @@
 namespace c;
 
 use Exception;
+use JsonSerializable;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 
 /**
  * Exception thrown on validation errors.
  */
-class ValidationException extends Exception implements MessageProviderInterface
+class ValidationException extends Exception implements MessageProviderInterface, JsonSerializable
 {
 	protected $errors;
 	protected $rules;
@@ -102,6 +103,16 @@ class ValidationException extends Exception implements MessageProviderInterface
 	public function getAction()
 	{
 		return $this->action;
+	}
+
+	/**
+	 * Behaviour for json_encode
+	 *
+	 * @return array
+	 */
+	public function jsonSerialize()
+	{
+		return ['errors' => $this->getErrors()];
 	}
 
 	/**
