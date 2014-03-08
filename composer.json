@@ -10,8 +10,8 @@
 	],
 	"require": {
 		"php": ">=5.4.0",
-		"illuminate/validation": "4.1.*",
-		"illuminate/support": "4.1.*"
+		"illuminate/validation": "~4.1",
+		"illuminate/support": "~4.1"
 	},
 	"require-dev": {
 		"mockery/mockery": "dev-master"
