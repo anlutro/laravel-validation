@@ -29,7 +29,7 @@ There are a couple of hooks you can use to add custom behaviour. `prepareRules($
 `prepareValidator($validator)` is called before checking if validation passes or not, and can be used to add sometimes() rules or any other custom behaviour onto the Illuminate\Validation\Validator object itself.
 
 #### Exceptions
-You can call `$validatorService->toggleExceptions();` to make the validator throw exceptions instead of just returning false. The exception thrown will be of the type `c\ValidationException`, which has some useful methods.
+You can call `$validatorService->toggleExceptions();` to make the validator throw exceptions instead of just returning false. The exception thrown will be of the type `anlutro\LaravelValidation\ValidationException`, which has some useful methods.
 
 - `getErrors()` gets a flat array of the validation errors.
 - `getRules()` gets the array of rules that were used when validating.

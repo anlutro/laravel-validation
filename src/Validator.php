@@ -7,7 +7,7 @@
  * @package  l4-validation
  */
 
-namespace c;
+namespace anlutro\LaravelValidation;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Factory;

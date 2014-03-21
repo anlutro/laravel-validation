@@ -7,7 +7,7 @@
  * @package  l4-validation
  */
 
-namespace c;
+namespace anlutro\LaravelValidation;
 
 use Exception;
 use JsonSerializable;
@@ -40,7 +40,7 @@ class ValidationException extends Exception implements MessageProviderInterface,
 
 		if (!$errors instanceof MessageBag) {
 			$type = is_object($errors) ? get_class($errors) : gettype($errors);
-			throw new Exception("Parameter #1 of \c\ValidationException::__construct must be an array, instance of Illuminate\Support\Contracts\MessageProviderInterface or Illuminate\Support\MessageBag - $type given", 0, $this);
+			throw new Exception("Parameter #1 of \anlutro\LaravelValidation\ValidationException::__construct must be an array, instance of Illuminate\Support\Contracts\MessageProviderInterface or Illuminate\Support\MessageBag - $type given", 0, $this);
 		}
 
 		$this->errors = $errors;

@@ -95,7 +95,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 			->andReturn(m::mock(['passes' => false, 'getMessageBag' => ['foo']]));
 		try {
 			$v->validSomething($input);
-		} catch (c\ValidationException $e) {
+		} catch (anlutro\LaravelValidation\ValidationException $e) {
 			$this->assertEquals($input, $e->getAttributes());
 			$this->assertEquals($rules, $e->getRules());
 			$this->assertContains('Something', $e->getMessage());
@@ -132,7 +132,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 	}
 }
 
-class ValidatorStub extends \c\Validator
+class ValidatorStub extends \anlutro\LaravelValidation\Validator
 {
 	protected function getCommonRules()
 	{

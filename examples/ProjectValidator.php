@@ -2,7 +2,7 @@
 /**
  * An example validator class for projects.
  */
-class ProjectValidator extends \c\Validator
+class ProjectValidator extends \anlutro\LaravelValidation\Validator
 {
 	/**
 	 * Get the common rules ran on every validation call.
