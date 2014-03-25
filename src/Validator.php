@@ -246,6 +246,16 @@ abstract class Validator
 	protected abstract function getCommonRules();
 
 	/**
+	 * Get the validation errors. Alternative to ->errors()
+	 *
+	 * @return \Illuminate\Support\MessageBag
+	 */
+	public function getErrors()
+	{
+		return $this->validator->errors();
+	}
+
+	/**
 	 * Missing method calls to this class will be passed on to the underlying
 	 * validator class for convenience.
 	 */
