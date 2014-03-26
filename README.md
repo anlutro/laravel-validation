@@ -37,6 +37,24 @@ You can call `$validatorService->toggleExceptions();` to make the validator thro
 
 It can also be cast to a string via `(string) $exception` which will render each validation error on one line.
 
+#### Model Validation
+Use model events to validate your models automatically. Assuming 'MyValidator' is an instance of anlutro\LaravelValidation\Validator and 'MyModel' is a valid Eloquent model, you can do the following for as many models as you like:
+
+    use anlutro\LaravelValidation\ModelValidator;
+    ModelValidator::register('MyValidator', 'MyModel');
+
+What this does behind the scenes:
+
+    public static function register($validator, $model)
+	{
+		$validator = \Illuminate\Support\Facades\App::make($validator);
+		\Illuminate\Support\Facades\Event::subscribe(new ModelValidator($validator, $model));
+	}
+
+This will validate creates and updates separately, so you can use `getCreateRules` and `getUpdateRules` as you normally would.
+
+Validation of deletes may be coming later.
+
 ## Contact
 Open an issue on GitHub if you have any problems or suggestions.
 
