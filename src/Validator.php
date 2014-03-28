@@ -43,7 +43,7 @@ abstract class Validator
 	 *
 	 * @var boolean
 	 */
-	protected $throwException = false;
+	protected $throwExceptions = false;
 
 	/**
 	 * Default merge behaviour - whether specific rules are merged with
@@ -70,7 +70,7 @@ abstract class Validator
 	 */
 	public function toggleExceptions($toggle = true)
 	{
-		$this->throwException = (bool) $toggle;
+		$this->throwExceptions = (bool) $toggle;
 		return $this;
 	}
 
@@ -130,7 +130,7 @@ abstract class Validator
 
 		$this->validator = $this->makeValidator($rules, $attributes);
 
-		if ($this->throwException) {
+		if ($this->throwExceptions) {
 			if ($this->validator->passes()) {
 				return true;
 			} else {
