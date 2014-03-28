@@ -9,12 +9,10 @@
 
 namespace anlutro\LaravelValidation;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Factory;
 
 /**
- * Validator class that can be injected into a repository or controller or
- * whatever else for easy validation of Eloquent models.
+ * Validation service class.
  */
 abstract class Validator
 {
