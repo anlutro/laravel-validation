@@ -111,44 +111,24 @@ abstract class Validator
 	}
 
 	/**
-	 * Handle a dynamic 'valid' method call.
+	 * Validate a set of attributes against an action.
 	 *
-	 * @param  string $method
-	 * @param  array  $args
+	 * Alternatively you can use dynamic method calls - e.g. valid('update', ...)
+	 * can be replaced with validUpdate(...)
 	 *
-	 * @return boolean
-	 */
-	protected function dynamicValidCall($method, array $args)
-	{
-		$action = substr($method, 5);
-		$method = 'get' . ucfirst($action) . 'Rules';
-
-		if (method_exists($this, $method)) {
-			$rules = $this->$method();
-		} else {
-			$rules = [];
-		}
-
-		$attributes = $args[0];
-
-		return $this->valid($rules, $attributes, null, $action);
-	}
-
-	/**
-	 * Prepare rules, make the validator and check if it passes.
-	 *
-	 * @param  array  $rules
-	 * @param  array  $attributes
-	 * @param  bool   $merge      Whether or not to merge with common rules
-	 * @param  string $action
+	 * @param  string  $action
+	 * @param  array   $attributes
+	 * @param  boolean $merge      Whether or not to merge with common rules.
+	 * Leave the parameter out to default to $this->merge
 	 *
 	 * @return boolean
 	 */
-	protected function valid(array $rules, array $attributes, $merge = null, $action = null)
+	public function valid($action, array $attributes, $merge = null)
 	{
-		$rules = $this->parseRules($rules, $attributes, $merge);
-		$this->validator = $this->factory->make($attributes, $rules);
-		$this->prepareValidator($this->validator);
+		$rules = $this->prepareRules($this->getRules($action), $attributes);
+		$rules = $this->replaceRuleVariables($rules, $attributes);
+
+		$this->validator = $this->makeValidator($rules, $attributes);
 
 		if ($this->throwException) {
 			if ($this->validator->passes()) {
@@ -162,23 +142,45 @@ abstract class Validator
 	}
 
 	/**
-	 * Parse the rules of the validator.
+	 * Get the rules for an action.
 	 *
-	 * @param  array  $rules
-	 * @param  array  $attributes
-	 * @param  bool   $merge      Whether or not to merge with common rules
+	 * @param  string  $action
+	 * @param  boolean $merge  Whether or not to merge with common rules. Leave
+	 * the parameter out to default to $this->merge
 	 *
 	 * @return array
 	 */
-	protected function parseRules(array $rules, array $attributes, $merge = null)
+	protected function getRules($action, $merge = null)
 	{
+		$method = 'get' . ucfirst($action) . 'Rules';
+
+		if (method_exists($this, $method)) {
+			$rules = $this->$method();
+		} else {
+			$rules = [];
+		}
+
 		if ($merge === null) {
 			$merge = $this->merge;
 		}
 
-		if ($merge) $rules = array_merge_recursive($this->getCommonRules(), $rules);
-		$rules = $this->prepareRules($rules, $attributes);
-		$rules = $this->replaceRuleVariables($rules, $attributes);
+		if ($merge) {
+			$rules = array_merge_recursive($this->getCommonRules(), $rules);
+		}
+
+		return $rules;
+	}
+
+	/**
+	 * Parse the rules of the validator.
+	 *
+	 * @param  array  $rules
+	 * @param  array  $attributes
+	 *
+	 * @return array
+	 */
+	protected function parseRules(array $rules, array $attributes)
+	{
 		return $rules;
 	}
 
@@ -229,6 +231,21 @@ abstract class Validator
 	}
 
 	/**
+	 * Make a new validator instance.
+	 *
+	 * @param  array  $rules
+	 * @param  array  $attributes
+	 *
+	 * @return \Illuminate\Validation\Validator
+	 */
+	protected function makeValidator(array $rules, array $attributes)
+	{
+		$validator = $this->factory->make($attributes, $rules);
+		$this->prepareValidator($this->validator);
+		return $validator;
+	}
+
+	/**
 	 * Prepare the validator class before checking if it passes or not. Useful
 	 * for adding sometimes() calls or similar.
 	 *
@@ -262,8 +279,13 @@ abstract class Validator
 	public function __call($method, $args)
 	{
 		if (substr($method, 0, 5) === 'valid') {
-			return $this->dynamicValidCall($method, $args);
-		} elseif ($this->validator !== null && method_exists($this->validator, $method)) {
+			if (!isset($args[0])) {
+				throw new \InvalidArgumentException("Missing argument #1 for $method (array of attributes to validate)");
+			}
+			$action = substr($method, 5);
+			$attributes = $args[0];
+			return $this->valid($action, $attributes);
+		} elseif ($this->validator !== null && is_callable([$this->validator, $method])) {
 			return call_user_func_array([$this->validator, $method], $args);
 		} else {
 			throw new \BadMethodCallException("$method does not exist on this class or its Validator");
