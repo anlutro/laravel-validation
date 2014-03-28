@@ -1,5 +1,7 @@
 <?php
+namespace anlutro\LaravelValidation\Tests;
 
+use PHPUnit_Framework_TestCase;
 use Mockery as m;
 use Illuminate\Support\Facades;
 
@@ -10,7 +12,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		m::close();
 	}
 
-	public function testRulesArePassed()
+	/** @test */
+	public function rulesArePassedAndValidationPasses()
 	{
 		$f = $this->makeFactory();
 		$v = $this->makeValidator($f);
@@ -22,7 +25,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($result);
 	}
 	
-	public function testRulesArePassed2()
+	/** @test */
+	public function rulesArePassedAndValidationFails()
 	{
 		$f = $this->makeFactory();
 		$v = $this->makeValidator($f);
@@ -34,7 +38,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($result);
 	}
 
-	public function testRulesAreCombined()
+	/** @test */
+	public function rulesAreCombined()
 	{
 		$f = $this->makeFactory();
 		$v = $this->makeValidator($f);
@@ -46,7 +51,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($result);
 	}
 
-	public function testTableIsReplaced()
+	/** @test */
+	public function tableIsReplaced()
 	{
 		$f = $this->makeFactory();
 		$v = $this->makeValidator($f);
@@ -60,7 +66,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($result);
 	}
 
-	public function testInputVarIsReplaced()
+	/** @test */
+	public function inputVarIsReplaced()
 	{
 		$f = $this->makeFactory();
 		$v = $this->makeValidator($f);
@@ -72,7 +79,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($result);
 	}
 
-	public function testRulesArePrepared()
+	/** @test */
+	public function rulesArePrepared()
 	{
 		$f = $this->makeFactory();
 		$v = $this->makeValidator($f);
@@ -84,7 +92,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($result);
 	}
 
-	public function testThrowsException()
+	/** @test */
+	public function throwsException()
 	{
 		$f = $this->makeFactory();
 		$v = $this->makeValidator($f);
@@ -95,7 +104,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 			->andReturn(m::mock(['passes' => false, 'getMessageBag' => ['foo']]));
 		try {
 			$v->validSomething($input);
-		} catch (anlutro\LaravelValidation\ValidationException $e) {
+		} catch (\anlutro\LaravelValidation\ValidationException $e) {
 			$this->assertEquals($input, $e->getAttributes());
 			$this->assertEquals($rules, $e->getRules());
 			$this->assertContains('Something', $e->getMessage());
@@ -103,7 +112,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 		}
 	}
 
-	public function testDefaultMergeBehaviour()
+	/** @test */
+	public function defaultMergeBehaviour()
 	{
 		$f = $this->makeFactory();
 		$v = new NoMergeValidatorStub($f);
