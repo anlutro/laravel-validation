@@ -1,4 +1,4 @@
-# Laravel 4 Validation service
+# Laravel 4 Validation service [![Build Status](https://travis-ci.org/anlutro/laravel-validation.png?branch=master)](https://travis-ci.org/anlutro/laravel-validation)
 Installation: `composer require anlutro/l4-validation`
 
 Pick the latest stable version from packagist or the GitHub tag list.
