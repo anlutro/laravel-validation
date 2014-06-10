@@ -123,7 +123,7 @@ abstract class Validator
 	 */
 	public function valid($action, array $attributes, $merge = null)
 	{
-		$rules = $this->prepareRules($this->getRules($action), $attributes);
+		$rules = $this->prepareRules($this->getRules($action, $merge), $attributes);
 		$rules = $this->replaceRuleVariables($rules, $attributes);
 
 		$this->validator = $this->makeValidator($rules, $attributes);
