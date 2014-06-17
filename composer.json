@@ -21,5 +21,6 @@
 			"anlutro\\LaravelValidation\\": "src/"
 		}
 	},
+	"minimum-stability": "dev",
 	"prefer-stable": true
 }
