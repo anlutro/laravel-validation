@@ -14,7 +14,7 @@ use Illuminate\Validation\Factory;
 /**
  * Validation service class.
  */
-abstract class Validator
+abstract class Validator implements ValidatorInterface
 {
 	/**
 	 * @var \Illuminate\Validation\Validator
@@ -60,11 +60,7 @@ abstract class Validator
 	}
 
 	/**
-	 * Toggle whether to throw exceptions on validation errors.
-	 *
-	 * @param  boolean $toggle
-	 *
-	 * @return static
+	 * {@inheritdoc}
 	 */
 	public function toggleExceptions($toggle = true)
 	{
@@ -73,12 +69,7 @@ abstract class Validator
 	}
 
 	/**
-	 * Tell the validator to replace a certain value in the rules.
-	 *
-	 * @param  string $key
-	 * @param  string $value
-	 *
-	 * @return void
+	 * {@inheritdoc}
 	 */
 	public function replace($key, $value)
 	{
@@ -109,17 +100,7 @@ abstract class Validator
 	}
 
 	/**
-	 * Validate a set of attributes against an action.
-	 *
-	 * Alternatively you can use dynamic method calls - e.g. valid('update', ...)
-	 * can be replaced with validUpdate(...)
-	 *
-	 * @param  string  $action
-	 * @param  array   $attributes
-	 * @param  boolean $merge      Whether or not to merge with common rules.
-	 * Leave the parameter out to default to $this->merge
-	 *
-	 * @return boolean
+	 * {@inheritdoc}
 	 */
 	public function valid($action, array $attributes, $merge = null)
 	{
@@ -261,9 +242,7 @@ abstract class Validator
 	protected abstract function getCommonRules();
 
 	/**
-	 * Get the validation errors. Alternative to ->errors()
-	 *
-	 * @return \Illuminate\Support\MessageBag
+	 * {@inheritdoc}
 	 */
 	public function getErrors()
 	{
