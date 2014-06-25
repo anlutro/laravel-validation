@@ -36,9 +36,6 @@ interface ValidatorInterface
 	/**
 	 * Validate a set of attributes against an action.
 	 *
-	 * Alternatively you can use dynamic method calls - e.g. valid('update', ...)
-	 * can be replaced with validUpdate(...)
-	 *
 	 * @param  string  $action
 	 * @param  array   $attributes
 	 * @param  boolean $merge      Whether or not to merge with common rules.
