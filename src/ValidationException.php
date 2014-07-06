@@ -10,14 +10,12 @@
 namespace anlutro\LaravelValidation;
 
 use Exception;
-use JsonSerializable;
 use Illuminate\Support\MessageBag;
-use Illuminate\Support\Contracts\MessageProviderInterface;
 
 /**
  * Exception thrown on validation errors.
  */
-class ValidationException extends Exception implements MessageProviderInterface, JsonSerializable
+class ValidationException extends Exception implements ValidationExceptionInterface
 {
 	protected $errors;
 	protected $rules;
@@ -106,13 +104,27 @@ class ValidationException extends Exception implements MessageProviderInterface,
 	}
 
 	/**
-	 * Behaviour for json_encode
-	 *
-	 * @return array
+	 * {@inheritdoc}
 	 */
 	public function jsonSerialize()
 	{
 		return ['errors' => $this->getErrors()];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function toArray()
+	{
+		return $this->jsonSerialize();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function toJson($options = 0)
+	{
+		return json_encode($this->jsonSerialize(), $options);
 	}
 
 	/**
@@ -123,6 +135,7 @@ class ValidationException extends Exception implements MessageProviderInterface,
 	public function __toString()
 	{
 		$errors = implode(PHP_EOL, $this->getErrors());
+
 		return $this->getMessage() . PHP_EOL . $errors;
 	}
 }
