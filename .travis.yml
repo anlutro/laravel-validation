@@ -11,9 +11,9 @@ env:
   - FRAMEWORK_VERSION="4.2.*"
   - FRAMEWORK_VERSION="4.3.*@dev"
 
-before_script:
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar require illuminate/validation:${FRAMEWORK_VERSION} illuminate/support:${FRAMEWORK_VERSION} --no-update
-  - php composer.phar install --dev --prefer-dist
+before_install:
+  - composer require illuminate/validation:${FRAMEWORK_VERSION} illuminate/support:${FRAMEWORK_VERSION} --no-update
+
+install: composer install --dev --prefer-dist
 
 script: phpunit
