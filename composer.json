@@ -1,6 +1,6 @@
 {
 	"name": "anlutro/l4-validation",
-	"description": "Validation service class for Laravel 4.",
+	"description": "Validation service class for Laravel.",
 	"license": "MIT",
 	"authors": [
 		{
