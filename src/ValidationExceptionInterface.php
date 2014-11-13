@@ -10,14 +10,14 @@
 namespace anlutro\LaravelValidation;
 
 use JsonSerializable;
-use Illuminate\Support\Contracts\ArrayableInterface;
-use Illuminate\Support\Contracts\JsonableInterface;
-use Illuminate\Support\Contracts\MessageProviderInterface;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Contracts\Support\MessageProvider;
 
 interface ValidationExceptionInterface extends
-	ArrayableInterface,
-	JsonableInterface,
+	Arrayable,
+	Jsonable,
 	JsonSerializable,
-	MessageProviderInterface
+	MessageProvider
 {
 }

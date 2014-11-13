@@ -1,7 +1,5 @@
 <?php
-namespace anlutro\LaravelValidation\Tests;
 
-use PHPUnit_Framework_TestCase;
 use Mockery as m;
 use Illuminate\Support\Facades;
 
