@@ -21,6 +21,11 @@
 			"anlutro\\LaravelValidation\\": "src/"
 		}
 	},
+	"extra": {
+		"branch-alias": {
+			"dev-develop": "0.6.x-dev"
+		}
+	},
 	"minimum-stability": "dev",
 	"prefer-stable": true
 }
