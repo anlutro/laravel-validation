@@ -7,12 +7,17 @@ php:
   - hhvm
 
 env:
-  - LVERSION="4.1.*"
-  - LVERSION="4.2.*"
+  - LV="4.1.*"
+  - LV="4.2.*"
+  - LV="5.0.*"
 
 before_install:
-  - composer require illuminate/validation:${LVERSION} illuminate/support:${LVERSION} --no-update
+  - composer require illuminate/validation:${LV} illuminate/support:${LV} --no-update
 
-install: composer install --dev --prefer-dist
+install:
+  - composer install --dev --no-interaction
 
-script: phpunit
+script:
+  - phpunit
+
+sudo: false
